@@ -5,8 +5,10 @@
 # @Link    : http://www.bitwater1997.cn
 # @Version : $Id$
 
-from SmartQQ.sqsession import SQSession
+from SmartQQ import QMcore
+from config import APIkey
 
 if __name__ == '__main__':
-    sqs = SQSession()
-    sqs.login()
+    qm = QMcore(APIkey)
+    qm.login()
+    qm.mainloop()

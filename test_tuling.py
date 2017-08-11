@@ -32,7 +32,6 @@ class test_main(object):
                 break
             resp = self.tuling.talk(info=info)
             print (resp)
-            print (resp.text)
 
     def _message_text(self):
         print (u"文字类")
@@ -111,5 +110,5 @@ class test_main(object):
 if __name__ == '__main__':
 
     tm = test_main(APIkey=config.APIkey)
-    tm.start()
+    # tm.start()
     tm.repl_test()
