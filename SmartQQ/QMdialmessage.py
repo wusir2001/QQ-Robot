@@ -35,12 +35,12 @@
 
 class QMdialmessage(object):
     """docstring for  QMdialmessage"""
-    DISCUSS = 2
-    GROUP = 1
-    PERSION = 0
+    PERSION_MESSAGE = 0
+    GROUP_MESSAGE = 1
+    DISCUSS_MESSAGE = 2
 
-    def __init__(self, dia_type, content, from_uin, to_uin, send_uin=None, group_code=None, msg_id=None, msg_type=None, time=None):
-        self.dia_type = dia_type
+    def __init__(self, message_type, content, from_uin, to_uin, send_uin=None, group_code=None, did=None, msg_id=None, msg_type=None, time=None):
+        self.message_type = message_type
         self.content = content
         self.from_uin = from_uin
         self.to_uin = to_uin
@@ -48,7 +48,9 @@ class QMdialmessage(object):
         self.group_code = group_code
         self.msg_type = msg_type
         self.msg_id = msg_id
+        self.did = did
         self.time = time
+        self.reply = None
 
     def __str__(self):
         return "%s : %s ;to(%s)(type:%s)" % (self.from_uin, self.content, self.to_uin, self.poll_type)

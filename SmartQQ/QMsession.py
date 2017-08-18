@@ -52,44 +52,67 @@ class QMsession(object):
         except requests.exceptions.ReadTimeout:
             Info('timeout')
         else:
-            r_json = resp.json()
-            Info(r_json['result'][0]['poll_type'])
-
-            value = r_json['result'][0]['value']
-            poll_type = r_json['result'][0]['poll_type']
+            message = resp.json()
+            poll_type = message['result'][0]['poll_type']
+            value = message['result'][0]['value']
+            message_len = len(value['content'])
+            content = ""
+            for i in range(1, message_len):
+                content = content + str(value['content'][i])
             if poll_type == 'message':
-
-                return QMdialmessage(dia_type = QMdialmessage.PERSION,  
-                    content=value['content'][1], 
-                    to_uin=value['to_uin'],
-                    from_uin=value['from_uin'],
-                    msg_id = value['msg_id'],
-                    time = value['time'],
-                    msg_tpye=value['msg_type'])
+                return QMdialmessage(message_type=QMdialmessage.PERSION_MESSAGE,
+                                     content=content,
+                                     to_uin=value['to_uin'],
+                                     from_uin=value['from_uin'],
+                                     msg_id=value['msg_id'],
+                                     time=value['time'],
+                                     # msg_tpye=value['msg_type']
+                                     )
 
             elif poll_type == 'group_message':
-
-                content = value['content']
-                groupid = value['group_code']
-                if '@' + self.nick in content[1]:
-                    message = content[3]
-                # return 'group_uin', groupid, message
+                return QMdialmessage(message_type=QMdialmessage.GROUP_MESSAGE,
+                                     content=content,
+                                     to_uin=value['to_uin'],
+                                     group_code=value['group_code'],
+                                     from_uin=value['from_uin'],
+                                     send_uin=value['send_uin'],
+                                     msg_id=value['msg_id'],
+                                     time=value['time'],
+                                     # msg_tpye=value['msg_type']
+                                     )
             elif poll_type == 'discu_message':
-                pass
+                return QMdialmessage(message_type=QMdialmessage.DISCUSS_MESSAGE,
+                                     content=content,
+                                     to_uin=value['to_uin'],
+                                     did=value['did'],
+                                     send_uin=value['send_uin'],
+                                     from_uin=value['from_uin'],
+                                     msg_id=value['msg_id'],
+                                     time=value['time'],
+                                     # msg_tpye=value['msg_type']
+                                     )
+        return None
 
-            Info(resp.text)
-            
-    def deal_message(self,diamessage):
-        if diamessage.dia_type == QMdialmessage.PERSION:
-            pass
-        elif diamessage.dia_type==QMdialmessage.GROUP:
-            pass
-        else :
-            pass
+    def send_message_to_persion(self, message):
+        # Info(message.reply)
+        self._send_message("to", to_id=message.from_uin, text=message.reply)
 
-    def send_message_to_persion(self, message_type, userid, message):
+    def send_message_to_group(self, message):
+        # self._send_message(
+            # "group_uin", to_id=message.group_uin, text=message.reply)
+        pass
 
-        data = {'r': json.dumps({"%s" % (message_type): int(userid), "content": "[\"%s\",[\"font\",{\"name\":\"宋体\",\"size\":10,\"style\":[0,0,0],\"color\":\"000000\"}]]" % (message), "face": 339, "clientid": 53999199, "msg_id": 89260007,
+    def send_message_to_discuss(self, message):
+        # self._send_message("did", to_id=message.did, text=message.reply)
+        pass
+
+    def _send_message(self, to, to_id, text):
+        Info(text)
+        data = {'r': json.dumps({"%s" % (to): int(to_id),
+                                 "content": "[\"%s\",[\"font\",{\"name\":\"宋体\",\"size\":10,\"style\":[0,0,0],\"color\":\"000000\"}]]" % (text),
+                                 "face": 339,
+                                 "clientid": 53999199,
+                                 "msg_id": 89260007,
                                  "psessionid": "%s" % (self.psessionid)})}
         # Info(data)
 
@@ -99,12 +122,6 @@ class QMsession(object):
         # Info(self.session.headers)
         # Info(self.session.cookies)
         Info(r)
-
-    def send_message_to_group(self):
-        pass
-
-    def send_message_to_discuss(self):
-        pass
 
     def _test_login(self):
         # 请求一下 get_online_buddies 页面，避免103错误。

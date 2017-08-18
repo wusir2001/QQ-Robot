@@ -7,6 +7,8 @@
 
 from .QMsession import QMsession
 from .tuling import TulingSDK
+from .QMdialmessage import QMdialmessage
+from .QMlog import Warning, Error, Info
 
 
 class QMcore(object):
@@ -20,6 +22,17 @@ class QMcore(object):
 
     def mainloop(self):
         while True:
-            message_type, uid, message = self.qmsession.get_message()
-            replay = self.tuling.talk(message)
-            self.qmsession.send_message(message_type, uid, replay)
+            message = self.qmsession.get_message()
+
+            if not message:
+                continue
+            message.reply = str(self.tuling.talk(message.content).text)
+            if message.message_type == QMdialmessage.PERSION_MESSAGE:
+                self.qmsession.send_message_to_persion(message)
+
+            elif message.message_type == QMdialmessage.GROUP_MESSAGE:
+                pass
+                # self.qmsession.send_message_to_group(message)
+            elif message.message_type == QMdialmessage.DISCUSS_MESSAGE:
+                pass
+            self.qmsession.send_message_to_discuss(message)
