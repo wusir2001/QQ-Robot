@@ -7,38 +7,31 @@
 
 from PIL import Image
 import io
-import os
 import codecs
 from .QMlog import Info, Error
-from .QMconfig import QRcode_pic_path
+from .QMconfig import QRcode_path
 
 
 class QMQRcode(object):
 
-    def __init__(self, qrcode=None, pic_path=None):
+    def __init__(self, qrcode=None, ):
         self.qrcode = qrcode
-        self.pic_path = pic_path
 
-    def show_picture(self, qrcode=None):
+    def show(self, qrcode=None):
         if qrcode:
             self.qrcode = qrcode
         if not self.qrcode:
             Error("there is no QRcode")
             return
+
+        # show the qrcode
         QR_code = io.BytesIO()
         QR_code.write(self.qrcode)
         img = Image.open(QR_code)
         img.show()
         QR_code.close()
 
-    def save_piture(self, qrcode=None):
-        if qrcode:
-            self.qrcode = qrcode
-        if not self.qrcode:
-            Error("there is no QRcode")
-            return
-
-        path = os.path.join(QRcode_pic_path, 'qrcode.jpg')
-        with codecs.open(path, 'rb') as f:
+        # save the qrcode
+        with codecs.open(QRcode_path, 'wb') as f:
             f.write(self.qrcode)
-        Info('success to save QRcode to %s', path)
+        Info('success to save QRcode to %s', QRcode_path)

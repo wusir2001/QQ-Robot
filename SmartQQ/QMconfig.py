@@ -7,4 +7,4 @@
 
 import os
 
-QRcode_pic_path = os.path.abspath
+QRcode_path = os.path.join(os.path.abspath, "QRcode/QRcode.jpg")
