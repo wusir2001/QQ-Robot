@@ -5,8 +5,8 @@
 # @Link    : http://www.bitwater1997.cn
 # @Version : 1.0
 
-from PIL import Image
-import io
+# from PIL import Image
+# import io
 import codecs
 from .QMlog import Info, Error
 from .QMconfig import QRcode_path
@@ -24,12 +24,12 @@ class QMQRcode(object):
             Error("there is no QRcode")
             return
 
-        # show the qrcode
-        QR_code = io.BytesIO()
-        QR_code.write(self.qrcode)
-        img = Image.open(QR_code)
-        img.show()
-        QR_code.close()
+        # # show the qrcode
+        # QR_code = io.BytesIO()
+        # QR_code.write(self.qrcode)
+        # img = Image.open(QR_code)
+        # img.show()
+        # QR_code.close()
 
         # save the qrcode
         with codecs.open(QRcode_path, 'wb') as f:
