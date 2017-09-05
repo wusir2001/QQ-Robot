@@ -30,7 +30,6 @@ class QMsession(object):
         self.clientid = 53999199
         self.msgId = 6000000
         self._prepare_session()
-        self.qmqrcode = QMQRcode()
 
     def login(self):
         self._wait_auth()
@@ -184,7 +183,7 @@ class QMsession(object):
         return qrcode
 
     def _show_QRcode(self):
-        self.qmqrcode.show_picture(self._get_QRcode())
+        QMQRcode(self._get_QRcode()).show()
 
     def _wait_auth(self):
         self._show_QRcode()
@@ -279,13 +278,3 @@ class QMsession(object):
             return result
         else:
             Error('smartQQ_request has error ! \n for message (%s)', html)
-
-
-if __name__ == '__main__':
-    qs = SQSession()
-    qs.login()
-    print(qs.ptwebqq)
-    print(qs.vfwebqq)
-    print(qs.psessionid)
-    print(qs.clientid)
-    print(qs.uin)
