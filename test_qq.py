@@ -9,6 +9,6 @@ from SmartQQ import QMcore
 from config import APIkey
 
 if __name__ == '__main__':
+
     qm = QMcore(APIkey)
-    qm.login()
-    qm.mainloop()
+    qm.start()

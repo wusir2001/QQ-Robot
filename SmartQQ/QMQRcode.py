@@ -30,7 +30,7 @@ class QMQRcode(object):
         # img = Image.open(QR_code)
         # img.show()
         # QR_code.close()
-
+        Info("QRCODE_PATH : %s", QRcode_path)
         # save the qrcode
         with codecs.open(QRcode_path, 'wb') as f:
             f.write(self.qrcode)

@@ -35,9 +35,9 @@
 
 class QMdialmessage(object):
     """docstring for  QMdialmessage"""
-    PERSION_MESSAGE = 0
-    GROUP_MESSAGE = 1
-    DISCUSS_MESSAGE = 2
+    PERSION_MESSAGE = 'person'
+    GROUP_MESSAGE = 'group'
+    DISCUSS_MESSAGE = 'discuss'
 
     def __init__(self, message_type, content, from_uin, to_uin, send_uin=None, group_code=None, did=None, msg_id=None, msg_type=None, time=None):
         self.message_type = message_type

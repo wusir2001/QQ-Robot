@@ -7,4 +7,11 @@
 
 import os
 
-QRcode_path = os.path.join(os.path.abspath, "QRcode/QRcode.jpg")
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# QRcode
+QRcode_path = os.path.join(basedir, "QRcode/QRcode.jpg")
+
+# datebase
+Datebase_path = 'sqlite:///' + \
+    os.path.join(basedir, 'database/app.db')

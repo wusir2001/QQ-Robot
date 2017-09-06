@@ -8,6 +8,7 @@
 import socket
 import codecs
 from .QMlog import Info
+import _thread
 
 
 class QMsocket(object):
@@ -17,7 +18,7 @@ class QMsocket(object):
         self.host = ""
         self.port = port
 
-    def start(self):
+    def _creat_socket(self):
 
         # Configure socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,15 +26,15 @@ class QMsocket(object):
 
         # passively wait, 3: maximum number of connections in the queue
         s.listen(3)
-
+        Info("Sucess to creat socket server")
         while True:
 
             # accept and establish connection
             conn, addr = s.accept()
 
             # receive message
-            request = conn.recv(1024)
-            Info('request is: %s,Connected by %s', request, addr)
+            # request = conn.recv(1024)
+            # Info('request is: %s,Connected by %s', request, addr)
 
             # send message
             try:
@@ -45,3 +46,6 @@ class QMsocket(object):
             conn.sendall(reply)
             # close connection
             conn.close()
+
+    def start(self):
+        _thread.start_new_thread(self._creat_socket, ())

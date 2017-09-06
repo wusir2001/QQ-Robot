@@ -31,110 +31,24 @@ class QMsession(object):
         self.msgId = 6000000
         self._prepare_session()
 
-    def login(self):
-        self._wait_auth()
-        self._get_Ptwebqq()
-        self._get_Vfwebqq()
-        self._get_UinAndPsessionid()
-        self._test_login()
+    def _prepare_session(self):
+        self._get_url(
+            'https://ui.ptlogin2.qq.com/cgi-bin/login?daid=164&target=self&'
+            'style=16&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&'
+            'no_verifyimg=1&s_url=http%3A%2F%2Fw.qq.com%2Fproxy.html&'
+            'f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001')
 
-    def get_message(self):
-        data = {'r': json.dumps({
-            "ptwebqq": "\#{%s}" % (self.ptwebqq),
-            "clientid": self.clientid,
-            "psessionid": "\#{%s}" % (self.psessionid),
-            "key": ""
-        })}
-        try:
-            resp = self._get_url('http://d1.web2.qq.com/channel/poll2', data=data,
-                                 Referer='http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2')
-        except requests.exceptions.ReadTimeout:
-            Info('timeout')
-        else:
-            message = resp.json()
-            poll_type = message['result'][0]['poll_type']
-            value = message['result'][0]['value']
-            message_len = len(value['content'])
-            content = ""
-            for i in range(1, message_len):
-                content = content + str(value['content'][i])
-            if poll_type == 'message':
-                return QMdialmessage(message_type=QMdialmessage.PERSION_MESSAGE,
-                                     content=content,
-                                     to_uin=value['to_uin'],
-                                     from_uin=value['from_uin'],
-                                     msg_id=value['msg_id'],
-                                     time=value['time'],
-                                     # msg_tpye=value['msg_type']
-                                     )
-
-            elif poll_type == 'group_message':
-                return QMdialmessage(message_type=QMdialmessage.GROUP_MESSAGE,
-                                     content=content,
-                                     to_uin=value['to_uin'],
-                                     group_code=value['group_code'],
-                                     from_uin=value['from_uin'],
-                                     send_uin=value['send_uin'],
-                                     msg_id=value['msg_id'],
-                                     time=value['time'],
-                                     # msg_tpye=value['msg_type']
-                                     )
-            elif poll_type == 'discu_message':
-                return QMdialmessage(message_type=QMdialmessage.DISCUSS_MESSAGE,
-                                     content=content,
-                                     to_uin=value['to_uin'],
-                                     did=value['did'],
-                                     send_uin=value['send_uin'],
-                                     from_uin=value['from_uin'],
-                                     msg_id=value['msg_id'],
-                                     time=value['time'],
-                                     # msg_tpye=value['msg_type']
-                                     )
-        return None
-
-    def send_message_to_persion(self, message):
-        # Info(message.reply)
-        self._send_message("to", to_id=message.from_uin, text=message.reply)
-
-    def send_message_to_group(self, message):
-        # self._send_message(
-            # "group_uin", to_id=message.group_uin, text=message.reply)
-        pass
-
-    def send_message_to_discuss(self, message):
-        # self._send_message("did", to_id=message.did, text=message.reply)
-        pass
-
-    def _send_message(self, to, to_id, text):
-        Info(text)
-        data = {'r': json.dumps({"%s" % (to): int(to_id),
-                                 "content": "[\"%s\",[\"font\",{\"name\":\"宋体\",\"size\":10,\"style\":[0,0,0],\"color\":\"000000\"}]]" % (text),
-                                 "face": 339,
-                                 "clientid": 53999199,
-                                 "msg_id": 89260007,
-                                 "psessionid": "%s" % (self.psessionid)})}
-        # Info(data)
-
-        r = self._smartQQ_request(url='https://d1.web2.qq.com/channel/send_buddy_msg2', data=data,
-                                  Referer="http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2")
-
-        # Info(self.session.headers)
-        # Info(self.session.cookies)
-        Info(r)
-
-    def _test_login(self):
-        # 请求一下 get_online_buddies 页面，避免103错误。
-        # 若请求无错误发生，则表明登录成功
-        self._smartQQ_request(
-            url=('http://d1.web2.qq.com/channel/get_online_buddies2?'
-                 'vfwebqq=%s&clientid=%d&psessionid=%s&t={rand}') %
-            (self.vfwebqq, self.clientid, self.psessionid),
-            Referer=('http://d1.web2.qq.com/proxy.html?v=20151105001&'
-                     'callback=1&id=2'),
-            Origin='http://d1.web2.qq.com'
-        )
-
-        Info('登录成功。登录账号：%s(%s)' % (self.nick, self.qq))
+        self.session.cookies.update({
+            'RK': 'OfeLBai4FB',
+            'pgv_pvi': '911366144',
+            'pgv_info': 'ssid pgv_pvid=1051433466',
+            'ptcz': ('ad3bf14f9da2738e09e498bfeb93dd9da7'
+                     '540dea2b7a71acfb97ed4d3da4e277'),
+            'qrsig': ('hJ9GvNx*oIvLjP5I5dQ19KPa3zwxNI'
+                      '62eALLO*g2JLbKPYsZIRsnbJIxNe74NzQQ')
+        })
+        self._get_auth_status()
+        self.session.cookies.pop('qrsig')
 
     def _get_auth_status(self):
 
@@ -156,34 +70,12 @@ class QMsession(object):
         ).content
         return result
 
-    def _prepare_session(self):
-        self._get_url(
-            'https://ui.ptlogin2.qq.com/cgi-bin/login?daid=164&target=self&'
-            'style=16&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&'
-            'no_verifyimg=1&s_url=http%3A%2F%2Fw.qq.com%2Fproxy.html&'
-            'f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001')
-
-        self.session.cookies.update({
-            'RK': 'OfeLBai4FB',
-            'pgv_pvi': '911366144',
-            'pgv_info': 'ssid pgv_pvid=1051433466',
-            'ptcz': ('ad3bf14f9da2738e09e498bfeb93dd9da7'
-                     '540dea2b7a71acfb97ed4d3da4e277'),
-            'qrsig': ('hJ9GvNx*oIvLjP5I5dQ19KPa3zwxNI'
-                      '62eALLO*g2JLbKPYsZIRsnbJIxNe74NzQQ')
-        })
-        self._get_auth_status()
-        self.session.cookies.pop('qrsig')
-
-    def _get_QRcode(self):
+    def _show_QRcode(self):
         qrcode = self._get_url(
             'https://ssl.ptlogin2.qq.com/ptqrshow?appid=501004106&e=0&l=M&' +
             's=5&d=72&v=4&t=' + repr(random.random())
         ).content
-        return qrcode
-
-    def _show_QRcode(self):
-        QMQRcode(self._get_QRcode()).show()
+        QMQRcode(qrcode).show()
 
     def _wait_auth(self):
         self._show_QRcode()
@@ -243,21 +135,23 @@ class QMsession(object):
         self.bkn = bknHash(self.session.cookies['skey'])
         Info('已获取uin和psessionid')
 
-    def _get_url(self, url, data=None, Referer=None, Origin=None):
+    def _get_url(self, url, data=None, Referer=None, Origin=None, timeout=None):
 
         Referer and self.session.headers.update({'Referer': Referer})
         Origin and self.session.headers.update({'Origin': Origin})
-        timeout = 30 if url != 'https://d1.web2.qq.com/channel/poll2' else 120
+        if not timeout:
+            timeout = 30 if url != 'https://d1.web2.qq.com/channel/poll2' else 120
 
         if data is None:
             return self.session.get(url, timeout=timeout)
         else:
             return self.session.post(url, data=data, timeout=timeout)
 
-    def _smartQQ_request(self, url, data=None, Referer=None, Origin=None,
+    def _smartQQ_request(self, url, data=None, Referer=None, Origin=None, timeout=None,
                          expectedCodes=(0, 100003, 100100)):
 
-        url = url.format(rand=repr(random.random()))
+        # url = url.format(rand=repr(random.random()))
+        url = url.format(rand='0.1')
         html = self._get_url(url, data, Referer, Origin).content.decode('utf8')
 
         rst = json.loads(html)
@@ -274,7 +168,163 @@ class QMsession(object):
             retcode = -1
 
         if (retcode in expectedCodes):
-            Info('smartQQ request successful ! \n for result (%s)', result)
+            # Info('smartQQ request successful ! \n for result (%s)', result)
             return result
         else:
             Error('smartQQ_request has error ! \n for message (%s)', html)
+
+    def get_info(self):
+        # 请求一下 get_online_buddies 页面，避免103错误。
+        # 若请求无错误发生，则表明登录成功
+        self._smartQQ_request(
+            url=('http://d1.web2.qq.com/channel/get_online_buddies2?'
+                 'vfwebqq=%s&clientid=%d&psessionid=%s&t={rand}') %
+            (self.vfwebqq, self.clientid, self.psessionid),
+            Referer=('http://d1.web2.qq.com/proxy.html?v=20151105001&'
+                     'callback=1&id=2'),
+            Origin='http://d1.web2.qq.com'
+        )
+
+        Info('登录成功。登录账号：%s(%s)' % (self.nick, self.qq))
+        return self.nick, self.qq
+
+    def login(self):
+        self._wait_auth()
+        self._get_Ptwebqq()
+        self._get_Vfwebqq()
+        self._get_UinAndPsessionid()
+
+    def get_message(self):
+        data = {'r': json.dumps({
+            "ptwebqq": "\#{%s}" % (self.ptwebqq),
+            "clientid": self.clientid,
+            "psessionid": "\#{%s}" % (self.psessionid),
+            "key": ""
+        })}
+        try:
+            resp = self._get_url('http://d1.web2.qq.com/channel/poll2', data=data,
+                                 Referer='http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2')
+        except requests.exceptions.ReadTimeout:
+            Info('timeout')
+        else:
+            message = resp.json()
+            Info(str(message))
+            poll_type = message['result'][0]['poll_type']
+            value = message['result'][0]['value']
+
+            content = ""
+            for i in range(1, len(value['content'])):
+                content = content + str(value['content'][i])
+            if poll_type == 'message':
+                return QMdialmessage(message_type=QMdialmessage.PERSION_MESSAGE,
+                                     content=content,
+                                     to_uin=value['to_uin'],
+                                     from_uin=value['from_uin'],
+                                     msg_id=value['msg_id'],
+                                     time=value['time'],
+                                     # msg_tpye=value['msg_type']
+                                     )
+
+            elif poll_type == 'group_message':
+                return QMdialmessage(message_type=QMdialmessage.GROUP_MESSAGE,
+                                     content=content,
+                                     to_uin=value['to_uin'],
+                                     group_code=value['group_code'],
+                                     from_uin=value['from_uin'],
+                                     send_uin=value['send_uin'],
+                                     msg_id=value['msg_id'],
+                                     time=value['time'],
+                                     # msg_tpye=value['msg_type']
+                                     )
+            elif poll_type == 'discu_message':
+                return QMdialmessage(message_type=QMdialmessage.DISCUSS_MESSAGE,
+                                     content=content,
+                                     to_uin=value['to_uin'],
+                                     did=value['did'],
+                                     send_uin=value['send_uin'],
+                                     from_uin=value['from_uin'],
+                                     msg_id=value['msg_id'],
+                                     time=value['time'],
+                                     # msg_tpye=value['msg_type']
+                                     )
+        return None
+
+    def send_message_to_persion(self, message):
+        # Info(message.reply)
+        self._send_message("to",
+                           url="http://d1.web2.qq.com/channel/send_buddy_msg2",
+                           to_id=message.from_uin, text=message.reply)
+
+    def send_message_to_group(self, message):
+        self._send_message("group_uin",
+                           url="http://d1.web2.qq.com/channel/send_qun_msg2", to_id=message.group_code, text=message.reply)
+
+    def send_message_to_discuss(self, message):
+        self._send_message("did",
+                           url="http://d1.web2.qq.com/channel/send_discu_msg2",
+                           to_id=message.did, text=message.reply)
+
+    def _send_message(self, to, url, to_id, text):
+        Info(text)
+        data = {'r': json.dumps({"%s" % (to): int(to_id),
+                                 "content": "[\"%s\",[\"font\",{\"name\":\"宋体\",\"size\":10,\"style\":[0,0,0],\"color\":\"000000\"}]]" % (text),
+                                 "face": 339,
+                                 "clientid": 53999199,
+                                 "msg_id": 89260007,
+                                 "psessionid": "%s" % (self.psessionid)})}
+
+        self._smartQQ_request(url=url, data=data,
+                              Referer="http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2")
+        # Info(r)
+
+    # 该接口已被废弃
+    # def get_qq_nub(self, uin):
+    #     '''
+    #         通过uin获得 QQ号
+    #         请求方式：Get
+
+    #         url：http://s.web2.qq.com/api/get_friend_uin2?tuid=\#{uin}&type=1&vfwebqq=\#{vfwebqq}&t=0.1
+
+    #         referer：http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1
+
+    #         tuid就是对方的uin。请求成功后取出result.account即可：
+    #         {
+    #             "retcode": 0,
+    #             "result": {
+    #                 "uiuin": "",
+    #                 "account": 3524125,
+    #                 "uin": 1382902354
+    #             }
+    #         }
+    #     '''
+    #     url = "http://s.web2.qq.com/api/get_friend_uin2?tuin=%s&type=1&vfwebqq=%s&t=0.1" % (
+    #         str(uin), self.vfwebqq)
+    #     Info(url)
+    #     resp = self._get_url(url=url,
+    #                          Referer="http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1",
+    #                          Origin='http://s.web2.qq.com').content
+    #     Info(resp)
+
+    def get_user_friends(self):
+        Info('start to get_user_friends')
+        url = 'http://s.web2.qq.com/api/get_user_friends2?'
+        data = {'vfwebqq': self.vfwebqq,
+                'hash': qHash(self.uin, self.ptwebqq)
+                }
+        result = self._smartQQ_request(url=url, data=data, timeout=1000,
+                                       Referer='http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1',
+                                       Origin='http://s.web2.qq.com')
+        Info('success to get_user_friends')
+        return result['info'], result['marknames']
+
+    def get_friend_info(self, uin):
+        url = 'http://s.web2.qq.com/api/get_friend_info2?tuin=%s&vfwebqq=%s&clientid=%s&psessionid=%s&t={rand}' % (
+            uin, self.vfwebqq, self.clientid, self.psessionid)
+        result = self._smartQQ_request(url=url, timeout=1000,
+                                       Referer='http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1')
+        return result
+
+    def get_qq_nub(self, uin):
+        info = self.get_friend_info(uin)
+        email = info['email'].split('@')
+        return email[0]

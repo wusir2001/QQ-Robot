@@ -52,7 +52,6 @@ class TulingSDK(object):
                 sys.setdefaultencoding('utf8')
             the final method is that you can use `str(mes_dic.text.encode('utf-8'))`
         '''
-
         return JsonDict(r.json())
 
 
