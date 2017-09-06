@@ -13,7 +13,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 # 初始化数据库连接:
-engine = create_engine(Datebase_path, echo=True)
+engine = create_engine(Datebase_path)
 metadata = MetaData(engine)
 
 Base = declarative_base()

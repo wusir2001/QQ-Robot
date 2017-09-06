@@ -12,8 +12,8 @@ import logging.config
 log_file_path = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'logging_config.ini')
 logging.config.fileConfig(log_file_path)
-logger = logging.logger = logging.getLogger(__name__)
-
+# logger = logging.logger = logging.getLogger(__name__)
+logger = logging.getLogger('QQ-chat')
 
 Warning = logger.warning
 Error = logger.error
