@@ -67,7 +67,7 @@ class JsonDict(dict):
 
     @property
     def content(self):
-        ret = self['text'] + '\n'
+        ret = self['text']
         code = self['code']
         '''
         100000 文本类
@@ -80,7 +80,7 @@ class JsonDict(dict):
         if code == 100000:
             return ret
         if code == 200000:
-            return (ret + self['url'] + '\n')
+            return (ret + '\n' + self['url'])
 
         if code == 302000:
                 # "article": "工信部:今年将大幅提网速降手机流量费",
@@ -89,7 +89,7 @@ class JsonDict(dict):
                 # "detailurl":
             for news in self['list']:
 
-                ret = ret + '%s\n来源: %s\n图片: %s\n详情链接: %s\n' % (
+                ret = ret + '\n%s\n来源: %s\n图片: %s\n详情链接: %s' % (
                     news['article'], news['source'], news['icon'], news['detailurl'])
             return ret
 
@@ -100,7 +100,7 @@ class JsonDict(dict):
                 # "detailurl": "http://m.xiachufang.com/recipe/264781/"
             for food in self['list']:
 
-                ret = ret + '菜名: %s\n图片: %s\n菜谱信息: %s\n详情链接: %s\n' % (
+                ret = ret + '\n菜名: %s\n图片: %s\n菜谱信息: %s\n详情链接: %s' % (
                     food['name'], food['icon'], food['info'], food['detailurl'])
             return ret
 
@@ -110,7 +110,7 @@ class JsonDict(dict):
             # "singer": "忘情水"
             # }
 
-            return ret + '歌曲名:%s\n歌手: %s\n' % (self['function']['song'],
+            return ret + '\n歌曲名:%s\n歌手: %s' % (self['function']['song'],
                                                self['function']['singer'])
 
         if code == 314000:
@@ -120,7 +120,7 @@ class JsonDict(dict):
             # "name": "望庐山瀑布"
             # }
 
-            return ret + '%s\n作者: %s\n' % (self['function']['name'],
+            return ret + '\n%s\n作者: %s' % (self['function']['name'],
                                            self['function']['author'])
 
         return ret

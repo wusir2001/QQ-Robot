@@ -50,7 +50,7 @@ class QMcore(object):
                 if ata in message.content:
                     cont = "".join(message.content.split(ata))
                     Info(cont)
-                    message.reply = str(self.tuling.talk(cont).text)
+                    message.reply = str(self.tuling.talk(cont).content)
                     if message.message_type == QMdialmessage.GROUP_MESSAGE:
                         self.qmsession.send_message_to_group(message)
                     elif message.message_type == QMdialmessage.DISCUSS_MESSAGE:
