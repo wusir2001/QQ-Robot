@@ -1,6 +1,6 @@
 # QQ-chat-robot（开发指南）
 
-有关如何使用请点击[此处](https://github.com/bitwater1997/QQ-Robot/wiki/QQ-chat-robot(%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97))
+有关如何使用请点击[此处](https://github.com/bitwater1997/QQ-Robot/wiki/QQ-chat-robot-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
 
 ## 前言
 
