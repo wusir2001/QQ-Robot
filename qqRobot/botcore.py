@@ -47,7 +47,7 @@ class Botcore(object):
 
                 try:
                     self.qqclient.send_message_to_persion(message)
-                except QQError.QQError as e:
+                except QQError as e:
                     self.logger.error('send message fail \n%s', str(e))
             else:
                 ata_me = '@%s' % (self.qqclient.qquser.nick)
