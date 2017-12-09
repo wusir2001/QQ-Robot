@@ -7,7 +7,7 @@
 
 
 import logging
-from .QQSDK import QQClient, QQMessage
+from .QQSDK import QQClient, QQMessage, QQError
 from .tuling import TulingSDK
 from .bothistory import Bothistory
 from .botsocket import Botsocket
@@ -43,7 +43,10 @@ class Botcore(object):
 
                 self.save_chat_message(message)
 
-                self.qqclient.send_message_to_persion(message)
+                try:
+                    self.qqclient.send_message_to_persion(message)
+                except QQError.QQError as e:
+                    self.logger.error('send message fail \n%s', str(e))
             else:
                 ata_me = '@%s' % (self.qqclient.qquser.nick)
                 if ata_me in message.content:
@@ -54,21 +57,32 @@ class Botcore(object):
                     self.save_chat_message(message)
 
                     if message.message_type == QQMessage.GROUP_MESSAGE:
-                        self.qqclient.send_message_to_group(message)
+                        try:
+                            self.qqclient.send_message_to_group(message)
+                        except QQError.QQError as e:
+                            self.logger.error('send message fail \n%s', str(e))
+
                     elif message.message_type == QQMessage.DISCUSS_MESSAGE:
-                        self.qqclient.send_message_to_discuss(message)
+                        try:
+                            self.qqclient.send_message_to_discuss(message)
+                        except QQError.QQError as e:
+                            self.logger.error('send message fail \n%s', str(e))
 
     def save_chat_message(self, message):
         uin = message.from_uin
         if message.message_type != QQMessage.PERSION_MESSAGE:
             uin = message.send_uin
-        user = self.hist.get_user_info_from_uin(uin)
+        user = self.hist.get_user_info_from_uin(str(uin))
+        if user is None:
+            self.logger.info("can't find user uin:%s", uin)
+            return
+        self.logger.info('get message from user_info\n%s', str(user))
         self.hist.save_chat_message(user_name=self.qqclient.qquser.nick, user_qq=self.qqclient.qquser.qq,
                                     message_type=message.message_type, from_name=user.user_name,
                                     from_qq=user.user_qq, from_text=message.content, reply_text=message.reply)
 
     def save_friends(self):
-        print('start to save_friends')
+        self.logger.info('start to save_friends')
         info, marknames = self.qqclient.get_user_friends()
         friends = []
         for i in info:
@@ -78,6 +92,6 @@ class Botcore(object):
                     tmp[2] = mk['markname']
                     break
             tmp[3] = self.qqclient.get_qq_nub_from_uin(i['uin'])
-            print(str(tmp))
+            self.logger.info(str(tmp))
             friends.append(tmp)
         self.hist.save_friends(friends)
