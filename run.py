@@ -68,5 +68,6 @@ def main():
 
 
 if __name__ == "__main__":
-    daemonize('/dev/null', '/tmp/daemon_stdout.log', '/tmp/daemon_error.log')
+    daemonize('/dev/null', '/home/bitwater/Desktop/QQ-Robot/log/daemon_stdout.log',
+              '/home/bitwater/Desktop/QQ-Robot/log//daemon_error.log')
     main()
