@@ -50,7 +50,7 @@ class ChatMessage(Base):
     from_name = Column(String(qq_size))
 
     def __repr__(self):
-        return "<User(user:%s(%d),type:%s,from:%s(%d),text(from):%s,text(reply):%s )>" % (
+        return "<User(user:%s(%s),type:%s,from:%s(%s),text(from):%s,text(reply):%s )>" % (
             self.user_name, self.user_qq,
             self.message_type,
             self.from_name, self.from_qq, self.from_text, self.reply_text)
@@ -69,7 +69,7 @@ class Admin(Base):
         self.timestamp = str(time.time())
 
     def __repr__(self):
-        return "<Admin( %s(%d) ) > " % (self.user_qq, self.user_name)
+        return "<Admin( %s(%s) ) > " % (self.user_qq, self.user_name)
 
 
 # class Category(Base):
@@ -103,7 +103,7 @@ class Friend(Base):
         self.mark_name = mark_name
 
     def __repr__(self):
-        return "<Friend( %s(%d) )" % (self.mark_name, self.user_qq)
+        return "<Friend( %s(%s) )" % (self.mark_name, self.user_qq)
 
 
 DBsession = sessionmaker(bind=engine)
