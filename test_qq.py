@@ -5,10 +5,10 @@
 # @Link    : http://www.bitwater1997.cn
 # @Version : $Id$s
 
-from SmartQQ import QMcore
+from qqRobot import Botcore
 from config import APIkey
 
 if __name__ == '__main__':
 
-    qm = QMcore(APIkey)
-    qm.start()
+    bot = Botcore(APIkey)
+    bot.start()
