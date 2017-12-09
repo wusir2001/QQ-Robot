@@ -42,23 +42,21 @@ class QQClient(object):
             "key": ""
         })}
         try:
-            resp = self.qqsession.get_url('http://d1.web2.qq.com/channel/poll2', data=data,
-                                          Referer='http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2', timeout=120)
+            result = self.qqsession.smartQQ_request('http://d1.web2.qq.com/channel/poll2', data=data,
+                                                    Referer='http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2', timeout=120)
         except requests.exceptions.ReadTimeout:
             self.logger.info('timeout')
         else:
-            message = resp.json()
-            if message is None:
+            if result is None:
                 return None
-            self.logger.info('Origin message:%s ', resp.text)
-            value = message['result'][0]['value']
+            value = result[0]['value']
 
             content = ""
             for i in range(1, len(value['content'])):
                 content = content + str(value['content'][i])
 
             return QQMessage(
-                poll_type=message['result'][0]['poll_type'],
+                poll_type=result[0]['poll_type'],
                 time=value['time'],
                 msg_id=value['msg_id'],
                 content=content,
