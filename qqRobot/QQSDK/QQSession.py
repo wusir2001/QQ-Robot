@@ -5,6 +5,7 @@
 # @Link    : http://bitwater1997.cn
 # @Version : $Id$
 
+from .QQError import QQError
 import logging
 import requests
 import json
@@ -14,16 +15,17 @@ class QQSession(object):
     """docstring for QQSession"""
 
     def __init__(self):
-        self.logger = logging.getLogger('QQSDK')
+        self.logger = logging.getLogger('QQSDK.QQSession')
         self.session = requests.Session()
+
+        self.__prepare_session()
+
+    def __prepare_session(self):
         self.session.headers.update({
             'User-Agent': ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9;'
                            ' rv:27.0) Gecko/20100101 Firefox/27.0'),
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         })
-        self.__prepare_session()
-
-    def __prepare_session(self):
         self.get_url(
             'https://ui.ptlogin2.qq.com/cgi-bin/login?daid=164&target=self&'
             'style=16&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&'
@@ -39,8 +41,6 @@ class QQSession(object):
             'qrsig': ('hJ9GvNx*oIvLjP5I5dQ19KPa3zwxNI'
                       '62eALLO*g2JLbKPYsZIRsnbJIxNe74NzQQ')
         })
-        # self._get_auth_status()
-        # self.session.cookies.pop('qrsig')
 
     def get_url(self, url, data=None, Referer=None, Origin=None, timeout=30):
 
@@ -77,4 +77,6 @@ class QQSession(object):
             return result
         else:
             self.logger.error(
-                'smartQQ_request has error ! \n for message (%s)', html)
+                'smartQQ_request has error ! \n for message (%s)\nurl: %s\n', html, url)
+            raise QQError(
+                retcode, 'smartQQ_request has error ! \n for message (%s)url: %s\n' % (html, url))

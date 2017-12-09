@@ -20,7 +20,7 @@ class QQUser(object):
     def __init__(self, qqsession, clientid):
         self.clientid = clientid
         self.qqsession = qqsession
-        self.logger = logging.getLogger('QQSDK')
+        self.logger = logging.getLogger('QQSDK.QQUser')
 
         self.ptwebqq = None
         self.vfwebqq = None

@@ -22,7 +22,7 @@ class QQClient(object):
         self.clientid = 53999199
         self.qqsession = QQSession()
         self.qquser = QQUser(self.qqsession, self.clientid)
-        self.logger = logging.getLogger('QQSDK')
+        self.logger = logging.getLogger('QQSDK.QQClient')
 
     def login(self):
         self.qquser.login()
@@ -48,6 +48,9 @@ class QQClient(object):
             self.logger.info('timeout')
         else:
             message = resp.json()
+            if message is None:
+                return None
+            self.logger.info('Origin message:%s ', resp.text)
             value = message['result'][0]['value']
 
             content = ""
@@ -65,7 +68,6 @@ class QQClient(object):
                 did=value['did'] if 'did' in value else None,
                 group_code=value['group_code'] if 'group_code' in value else None
             )
-        return None
 
     def send_message_to_persion(self, message):
         self.__send_message("to",
@@ -88,7 +90,7 @@ class QQClient(object):
                                  "face": 339,
                                  "clientid": 53999199,
                                  "msg_id": 89260007,
-                                 "psessionid": "%s" % (self.psessionid)})}
+                                 "psessionid": "%s" % (self.qquser.psessionid)})}
 
         self.qqsession.smartQQ_request(url=url, data=data,
                                        Referer="http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2")

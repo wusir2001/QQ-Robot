@@ -13,3 +13,7 @@ log_file_path = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'logging_config.ini')
 logging.config.fileConfig(log_file_path)
 logger = logging.logger = logging.getLogger('QQSDK')
+
+
+from .QQClient import QQClient
+from .QQMessage import QQMessage

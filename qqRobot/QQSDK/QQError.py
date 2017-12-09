@@ -7,15 +7,11 @@
 
 
 class QQError(BaseException):
-    def __init__(self, error_code, error, http_code=None):
-
+    def __init__(self, error_code, error):
         self.error = error
         self.error_code = error_code
-        self.http_code = http_code
 
     def __str__(self):
-        return 'http_code : %s\nerror_code : %s\nerror : %s\n' % (
-            self.http_code,
+        return 'error_code : %s\nerror : %s\n' % (
             self.error,
-            self.error_code,
-            self.request)
+            self.error_code)
