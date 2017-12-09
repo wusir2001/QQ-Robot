@@ -7,6 +7,7 @@
 
 
 import logging
+import os
 from .QQSDK import QQClient, QQMessage, QQError
 from .tuling import TulingSDK
 from .bothistory import Bothistory
@@ -22,7 +23,8 @@ class Botcore(object):
         self.logger = logging.getLogger('qqRobot.Botcore')
 
     def start(self):
-        Botsocket('qrcode.jpg').start()
+        Botsocket(os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), '../qrcode.jpg')).start()
         self.qqclient.login()
         self.hist.clear()
         self.hist.save_admin(

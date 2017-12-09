@@ -7,6 +7,7 @@
 
 import time
 import logging
+import os
 from .QQUtils import bknHash, qHash
 import random
 import codecs
@@ -31,13 +32,24 @@ class QQUser(object):
         self.qq = None
 
     def login(self):
+
+        self.logger.info('start __get_auth_status')
         self.__get_auth_status()
+
         self.qqsession.session.cookies.pop('qrsig')
 
+        self.logger.info('start __wait_auth')
         self.__wait_auth()
+
+        self.logger.info('start __get_Ptwebqq')
         self.__get_Ptwebqq()
+
+        self.logger.info('start __get_Vfwebqq')
         self.__get_Vfwebqq()
+
+        self.logger.info('start __get_UinAndPsessionid')
         self.__get_UinAndPsessionid()
+
         self.__get_info()
 
     def __show_QRcode(self):
@@ -45,7 +57,9 @@ class QQUser(object):
             'https://ssl.ptlogin2.qq.com/ptqrshow?appid=501004106&e=0&l=M&' +
             's=5&d=72&v=4&t=' + repr(random.random())
         ).content
-        with codecs.open('qrcode.jpg', 'wb') as f:
+        qrdir = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), '../../qrcode.jpg')
+        with codecs.open(qrdir, 'wb') as f:
             f.write(qrcode)
 
     def __get_auth_status(self):

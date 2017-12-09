@@ -25,6 +25,7 @@ class QQClient(object):
         self.logger = logging.getLogger('QQSDK.QQClient')
 
     def login(self):
+        self.logger.info('start login')
         self.qquser.login()
 
     def logout(self):
