@@ -1,9 +1,8 @@
 # my
 config.py
-QRcode.jpg
-qqbot.log
-app.db
-
+qrcode.jpg
+QQSDK.log
+qqRobot.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
