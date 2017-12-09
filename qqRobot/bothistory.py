@@ -6,10 +6,14 @@
 # @Version : $Id$
 
 import time
+import logging
 from .models import DBsession, ChatMessage, Admin, Friend
 
 
 class Bothistory(object):
+
+    def __init__(self):
+        self.logger = logging.getLogger('qqRobot.Bothistory')
 
     def clear(self):
         session = DBsession()
@@ -70,6 +74,7 @@ class Bothistory(object):
         session.close()
 
     def get_user_info_from_uin(self, uin):
+        self.logger.info("get_user_info_from_uin : %s", uin)
         session = DBsession()
         user = session.query(Friend).filter(Friend.uin == uin).first()
         return user

@@ -47,6 +47,7 @@ class QQClient(object):
         except requests.exceptions.ReadTimeout:
             self.logger.info('timeout')
         else:
+            self.logger.info('Origin receive message:%s', str(result))
             if result is None:
                 return None
             value = result[0]['value']
@@ -55,7 +56,7 @@ class QQClient(object):
             for i in range(1, len(value['content'])):
                 content = content + str(value['content'][i])
 
-            return QQMessage(
+            qm = QQMessage(
                 poll_type=result[0]['poll_type'],
                 time=value['time'],
                 msg_id=value['msg_id'],
@@ -66,6 +67,8 @@ class QQClient(object):
                 did=value['did'] if 'did' in value else None,
                 group_code=value['group_code'] if 'group_code' in value else None
             )
+            self.logger.info(str(qm))
+            return qm
 
     def send_message_to_persion(self, message):
         self.__send_message("to",

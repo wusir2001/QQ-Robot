@@ -17,3 +17,4 @@ logger = logging.logger = logging.getLogger('QQSDK')
 
 from .QQClient import QQClient
 from .QQMessage import QQMessage
+from .QQError import QQError
