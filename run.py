@@ -58,13 +58,13 @@ def daemonize(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
 # 示例函数：每秒打印一个数字和时间戳
 
 
-from SmartQQ import QMcore
+from qqRobot import Botcore
 from config import APIkey
 
 
 def main():
-    qm = QMcore(APIkey)
-    qm.start()
+    bot = Botcore(APIkey)
+    bot.start()
 
 
 if __name__ == "__main__":
