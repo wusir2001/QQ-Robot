@@ -47,6 +47,8 @@ class QQClient(object):
                                                     Referer='http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2', timeout=120)
         except requests.exceptions.ReadTimeout:
             self.logger.info('timeout')
+        except requests.exceptions.ConnectTimeout:
+            self.logger.info('timeout')
         else:
             self.logger.info('Origin receive message:%s', str(result))
             if result is None:
