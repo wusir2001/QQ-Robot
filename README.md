@@ -1,69 +1,44 @@
-# QQ-chat-robot（开发指南）
+<h1 align="center"><a >QQ Chat Robot</a></h1>
 
-有关如何使用请点击[此处](https://github.com/bitwater1997/QQ-Robot/wiki/QQ-chat-robot-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
+<p align="center">
+<a href=""><img alt="GitHub release" src="https://img.shields.io/github/release/bitwater1997/QQ-Robot.svg"></a>
+<a href=""><img alt="author" src="https://img.shields.io/badge/Author-bitwater-orange.svg"></a>
+<a href=""><img alt="python-version" src="https://img.shields.io/pypi/pyversions/Django.svg"></a>
+<a href=""><img alt="依赖" src="https://img.shields.io/badge/SqlAlchemy-recently-green.svg"></a>
+<a href=""><img alt="依赖" src="https://img.shields.io/badge/Requests-recently-orange.svg"></a>
+<a href=""><img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/bitwater1997/QQ-Robot.svg"></a>
+<a href=""><img alt="license" src="https://img.shields.io/github/license/bitwater1997/QQ-Robot.svg"></a>
+</p>
 
-## 前言
-
-Win下的qq聊天机器人酷Q确实做的不错，不过，缺点也很明显，只能在win下跑，不能跨平台，自己肯定不会蠢到去买个win vps， 也不想让自己电脑24小时开机.......所以就想自己写一个挂在linux上。
-
-酷Q号称基于SmartQQ协议，我深感怀疑，SmartQQ功能毕竟还是太弱了，网上很多人都说酷Q基于标准的andriod qq协议，我也不知道那是个什么协议，我只知道qq的开发者申请真TMD的麻烦。
-
-反正本项目是要根据SmartQQ协议开发的，所以自然也会受限于SmartQQ协议。
-
-
-
-## 依赖
-
-聊天功能的实现依赖于`图灵机器人的api接口`
-
-http协议依赖`requests`库
-
-数据库依赖`SqlAlchemy` 库
-
-## 架构
-
-为了实现更加灵活的功能扩展，例如聊天信息的处理，微信聊天之类的平台扩展，聊天记录的保存.....
-
-尽可能把功能分离，降低耦合，各个子功能封装成类，一个核心类完成整个流程
-
-### 基础子类
-1. QMlog类  ( log信息记录显示处理 )
-2. QMdialmessage类  ( 聊天信息的封装,信息传递的载体  )
-3. QMQRcode类 ( 保持qq二维码 )
-4. QMutils类 ( qqsmart 一些hash值的处理  )
-5. QMconfig类  ( 记录配置信息,内置的配置信息  )
-6. QMhistory类  ( 记录登入信息，聊天记录等等信息  )
-7. QMcore类  (负责主逻辑流程的处理)
-8. QMsocket类 (手写了一个socket服务器)
-
-## 开发流程
-整个开发大体经过了三个部分
-1. 分析并封装SmartQQ协议
-2. 分析聊天数据，调用tuling接口
-3. 二维码的显示，数据库的设计，消息的传递
-
-### SmartQQ协议的分析
-
-这个协议的分析网上一搜一大堆，但是，实际上能用的，没发现几个。SmartQQ协议十分严格，refer这些heade-content都是不能少的，cookie中的关键value，hash是要分析js才能搞定的，这里推荐一个[blog](http://www.scienjus.com/webqq-analysis-1/) ，写的非常不错，对比他的源码，顺利分析这个协议还是不难的。
-
-### 二维码的显示
-
-刚开始准备用PIL显示保存的二维码的，但是linux服务器可是没装gui的，还是觉得用个socket服务器，模拟一个简单的http请求。开一个线程，监听端口就好了，有请求就返回QRcode
-
-### 数据库部分
-
-这里偷懒直接上了个ORM，也是为了以后改起来方便。
-
-SmartQQ中uin的意义一直没搞清楚，很多人说会改变，也没找到根据uin获取qq号的稳定接口，所以只能用个临时table记录当前用户的好友信息。这个表也是为了能够保存聊天记录，因为聊天接口部分是使用用户的uin标识的。
-
-还用一个表记录了当前登入用户的信息，不过这都不是重点了。
-
-### 消息的封装
-
-要想将SmartQQ api封装成QMsession，在QMcore中调用降低两部分的耦合，用QMdiamessage类封装消息是必需的，这个类里面封装了消息的类型， 消息内容， 返回的内容，来源（个人，群，讨论组）这些基本信息。
+>
+> Win下的酷Q确实做的不错,不过只能在win下跑,虽然github上已经有一个较不错的qqbot项目了,不过还是决定撸轮子.....
+> 酷Q似乎用的不是smartQQ协议,毕竟这个协议功能太弱了,不过我也没兴趣抓andriod版本的包了,这webqq的协议就够头疼了,
 
 
 
-## 感谢
+## Download
 
-本项目的开发离不开众多开源项目的支持与帮助，尤其是在SmartQQ协议的分析部分，参考了很多项目经验，也亲自抓包测试。受限与自己的水平，代码写的并不是很漂亮.....不过最终完成后的效果还是不错的。
+git最新的release版本
+
+
+
+##Docs
+
+先创建数据库
+
+```shell
+python3 Creat_db.py
+```
+
+运行守护进程daemonize
+
+```shell
+python3 run.py
+```
+
+也可以直接依附终端运行
+
+```shell
+python3 test.py
+```
+
