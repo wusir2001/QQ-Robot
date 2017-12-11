@@ -57,26 +57,36 @@ class QQSession(object):
 
         # url = url.format(rand=repr(random.random()))
         url = url.format(rand='0.1')
-        html = self.get_url(url, data, Referer, Origin).content.decode('utf8')
 
-        rst = json.loads(html)
+        error_cnt = 0
 
-        result = rst.get('result', rst)
+        while True:
 
-        if 'retcode' in rst:
-            retcode = rst['retcode']
-        elif 'errCode' in rst:
-            retcode = rst['errCode']
-        elif 'ec' in rst:
-            retcode = rst['ec']
-        else:
-            retcode = -1
+            html = self.get_url(url, data, Referer,
+                                Origin).content.decode('utf8')
 
-        if (retcode in expectedCodes):
-            # Info('smartQQ request successful ! \n for result (%s)', result)
-            return result
-        else:
-            self.logger.error(
-                'smartQQ_request has error ! \n for message (%s)\nurl: %s\n', html, url)
-            raise QQError(
-                retcode, 'smartQQ_request has error ! \n for message (%s)url: %s\n' % (html, url))
+            rst = json.loads(html)
+
+            result = rst.get('result', rst)
+
+            if 'retcode' in rst:
+                retcode = rst['retcode']
+            elif 'errCode' in rst:
+                retcode = rst['errCode']
+            elif 'ec' in rst:
+                retcode = rst['ec']
+            else:
+                retcode = -1
+
+            if (retcode in expectedCodes):
+                # Info('smartQQ request successful ! \n for result (%s)', result)
+                return result
+            else:
+                self.logger.error(
+                    'smartQQ_request has error ! \n for message (%s)\nurl: %s\n', html, url)
+                if error_cnt < 5:
+                    error_cnt += 1
+                    continue
+
+                raise QQError(
+                    retcode, 'smartQQ_request has error ! \n for message (%s)url: %s\n' % (html, url))

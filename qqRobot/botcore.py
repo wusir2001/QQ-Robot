@@ -35,7 +35,13 @@ class Botcore(object):
 
     def mainloop(self):
         while True:
-            message = self.qqclient.get_message()
+
+            try:
+                message = self.qqclient.get_message()
+            except QQError:
+                self.logger.info('出现错误,尝试重新登录')
+                self.qqclient.login()
+                continue
             self.logger.info('get message :%s', message)
             if message is None:
                 continue
