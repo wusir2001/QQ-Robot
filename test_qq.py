@@ -7,8 +7,16 @@
 
 from qqRobot import Botcore
 from config import APIkey
+import os
+import logging
+import logging.config
+
+log_file_path = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'logging_config.ini')
+logging.config.fileConfig(log_file_path)
+logger = logging.logger = logging.getLogger('qqrobot')
 
 if __name__ == '__main__':
 
-    bot = Botcore(APIkey)
+    bot = Botcore(APIkey, 'qrcode.jpg')
     bot.start()
