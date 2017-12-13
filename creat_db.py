@@ -8,6 +8,11 @@
 
 from qqRobot.models import engine, Base
 
-if __name__ == '__main__':
+
+def creatdb():
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
+
+
+if __name__ == '__main__':
+    creatdb()

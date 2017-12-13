@@ -36,7 +36,6 @@ class QQClient(object):
         pass
 
     def get_message(self):
-        self.logger.info('getting message')
         data = {'r': json.dumps({
             "ptwebqq": "\#{%s}" % (self.qquser.ptwebqq),
             "clientid": self.clientid,

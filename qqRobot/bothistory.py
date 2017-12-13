@@ -18,6 +18,8 @@ class Bothistory(object):
     def clear(self):
         session = DBsession()
         session.query(Friend).delete()
+        session.query(Group).delete()
+        session.query(Discuss).delete()
         session.commit()
         session.close()
 

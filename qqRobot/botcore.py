@@ -49,12 +49,12 @@ class Botcore(object):
                 continue
             if message.message_type == QQMessage.PERSION_MESSAGE:
                 message.reply = self.tuling.talk(message.content).content
-                self.logger.info('reply : %s', message.reply)
 
                 self.save_chat_message(message)
 
                 try:
-                    self.qqclient.send_message_to_persion(message)
+                    self.qqclient.send_message_to_persion(
+                        message.reply, message.from_uin)
                 except QQError as e:
                     self.logger.error('send message fail \n%s', str(e))
             else:
@@ -62,19 +62,20 @@ class Botcore(object):
                 if ata_me in message.content:
                     cont = "".join(message.content.split(ata_me))
                     message.reply = self.tuling.talk(cont).content
-                    self.logger.info('reply : %s', message.reply)
 
                     self.save_chat_message(message)
 
                     if message.message_type == QQMessage.GROUP_MESSAGE:
                         try:
-                            self.qqclient.send_message_to_group(message)
+                            self.qqclient.send_message_to_group(
+                                message.reply, message.group_code)
                         except QQError as e:
                             self.logger.error('send message fail \n%s', str(e))
 
                     elif message.message_type == QQMessage.DISCUSS_MESSAGE:
                         try:
-                            self.qqclient.send_message_to_discuss(message)
+                            self.qqclient.send_message_to_discuss(
+                                message.reply, message.did)
                         except QQError as e:
                             self.logger.error('send message fail \n%s', str(e))
 

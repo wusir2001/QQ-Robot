@@ -53,6 +53,6 @@ class QQMessage(object):
     def __str__(self):
 
         if self.message_type == QQMessage.PERSION_MESSAGE:
-            return "%s\n ---%s : %s \n" % (self.message_type, self.from_uin, self.content)
+            return "%s ---%s : %s" % (self.message_type, self.from_uin, self.content)
         else:
-            return "%s\n ---%s(in(%s)) : %s \n" % (self.message_type, self.from_uin, self.send_uin, self.content)
+            return "%s ---%s(in(%s)) : %s" % (self.message_type, self.from_uin, self.send_uin, self.content)
