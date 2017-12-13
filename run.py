@@ -55,19 +55,27 @@ def daemonize(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
     os.dup2(so.fileno(), sys.stdout.fileno())
     os.dup2(se.fileno(), sys.stderr.fileno())
 
-# 示例函数：每秒打印一个数字和时间戳
 
-
+import logging
+import logging.config
 from qqRobot import Botcore
 from config import APIkey
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+log_file_path = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'logging_config.ini')
+logging.config.fileConfig(log_file_path)
+logger = logging.logger = logging.getLogger('qqrobot')
+
 
 def main():
-    bot = Botcore(APIkey)
+    qrcode = os.path.join(basedir, 'qrcode.jpg')
+    bot = Botcore(APIkey, qrcode)
     bot.start()
 
 
 if __name__ == "__main__":
-    daemonize('/dev/null', '/home/bitwater/Desktop/QQ-Robot/log/daemon_stdout.log',
-              '/home/bitwater/Desktop/QQ-Robot/log//daemon_error.log')
+    stderr_path = os.path.join(basedir, 'log/error.log')
+    daemonize(stdout=stderr_path)
     main()

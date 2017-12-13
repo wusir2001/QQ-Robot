@@ -17,6 +17,7 @@ logging.config.fileConfig(log_file_path)
 logger = logging.logger = logging.getLogger('qqrobot')
 
 if __name__ == '__main__':
-
-    bot = Botcore(APIkey, 'qrcode.jpg')
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    qrcode = os.path.join(basedir, 'qrcode.jpg')
+    bot = Botcore(APIkey, qrcode)
     bot.start()
