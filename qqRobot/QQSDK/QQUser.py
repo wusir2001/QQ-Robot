@@ -7,18 +7,17 @@
 
 import time
 import logging
-import os
-from .QQUtils import bknHash, qHash
 import random
 import codecs
-from .QQError import QQError
 import json
+from .QQUtils import bknHash, qHash
+from .QQError import QQError
 
 
 class QQUser(object):
     """docstring for QQUser"""
 
-    def __init__(self, qqsession, clientid):
+    def __init__(self, qqsession, clientid, qr_path):
         self.clientid = clientid
         self.qqsession = qqsession
         self.logger = logging.getLogger('QQSDK.QQUser')
@@ -30,6 +29,8 @@ class QQUser(object):
 
         self.nick = None
         self.qq = None
+
+        self.qr_path = qr_path
 
     def login(self):
 
@@ -57,10 +58,9 @@ class QQUser(object):
             'https://ssl.ptlogin2.qq.com/ptqrshow?appid=501004106&e=0&l=M&' +
             's=5&d=72&v=4&t=' + repr(random.random())
         ).content
-        qrdir = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), '../../qrcode.jpg')
-        with codecs.open(qrdir, 'wb') as f:
+        with codecs.open(self.qr_path, 'wb') as f:
             f.write(qrcode)
+        self.logger.info('已保存图片 : %s', self.qr_path)
 
     def __get_auth_status(self):
 
@@ -93,18 +93,17 @@ class QQUser(object):
                 self.logger.info('二维码已扫描，等待授权...')
             elif '二维码已失效' in authStatus:
                 self.logger.warning('二维码已失效, 重新获取二维码')
-                self._show_QRcode()
+                self.__show_QRcode()
             elif '登录成功' in authStatus:
                 self.logger.info('已获授权')
                 items = authStatus.split(',')
                 self.nick = str(items[-1].split("'")[1])
-                self.qq = str(
-                    int(self.qqsession.session.cookies['superuin'][1:]))
+                self.qq = str(self.qqsession.session.cookies['superuin'][1:])
                 self.urlPtwebqq = items[2].strip().strip("'")
-                break
+                return
             else:
                 self.logger.error('获取二维码扫描状态时出错, html="%s"' % (authStatus))
-                raise QQError('0001', authStatus)
+                raise QQError('-1', authStatus)
 
     def __get_Ptwebqq(self):
         self.qqsession.get_url(self.urlPtwebqq)

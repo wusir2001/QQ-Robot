@@ -7,7 +7,6 @@
 
 
 import logging
-import os
 from .QQSDK import QQClient, QQMessage, QQError
 from .tuling import TulingSDK
 from .bothistory import Bothistory
@@ -16,21 +15,24 @@ from .botsocket import Botsocket
 
 class Botcore(object):
 
-    def __init__(self, APIkey):
+    def __init__(self, APIkey, qr_path):
+        self.qr_path = qr_path
         self.tuling = TulingSDK(APIkey)
-        self.qqclient = QQClient()
+        self.qqclient = QQClient(qr_path)
         self.hist = Bothistory()
         self.logger = logging.getLogger('qqRobot.Botcore')
 
     def start(self):
-        Botsocket(os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), '../qrcode.jpg')).start()
+        Botsocket(self.qr_path).start()
         self.qqclient.login()
-        self.hist.clear()
-        self.hist.save_admin(
-            user_name=self.qqclient.qquser.nick, user_qq=self.qqclient.qquser.qq)
 
-        self.save_friends()
+        self.hist.clear()
+        self.hist.save_admin(self.qqclient.qquser.qq,
+                             self.qqclient.qquser.nick)
+        self.hist.save_friends(self.qqclient.get_friend_list())
+        self.hist.save_groups(self.qqclient.get_group_list())
+        self.hist.save_discuss(self.qqclient.get_discus_list())
+
         self.mainloop()
 
     def mainloop(self):
@@ -67,13 +69,13 @@ class Botcore(object):
                     if message.message_type == QQMessage.GROUP_MESSAGE:
                         try:
                             self.qqclient.send_message_to_group(message)
-                        except QQError.QQError as e:
+                        except QQError as e:
                             self.logger.error('send message fail \n%s', str(e))
 
                     elif message.message_type == QQMessage.DISCUSS_MESSAGE:
                         try:
                             self.qqclient.send_message_to_discuss(message)
-                        except QQError.QQError as e:
+                        except QQError as e:
                             self.logger.error('send message fail \n%s', str(e))
 
     def save_chat_message(self, message):
@@ -88,18 +90,3 @@ class Botcore(object):
         self.hist.save_chat_message(user_name=self.qqclient.qquser.nick, user_qq=self.qqclient.qquser.qq,
                                     message_type=message.message_type, from_name=user.user_name,
                                     from_qq=user.user_qq, from_text=message.content, reply_text=message.reply)
-
-    def save_friends(self):
-        self.logger.info('start to save_friends')
-        info, marknames = self.qqclient.get_user_friends()
-        friends = []
-        for i in info:
-            tmp = [i['uin'], i['nick'], '', '']
-            for mk in marknames:
-                if i['uin'] == mk['uin']:
-                    tmp[2] = mk['markname']
-                    break
-            tmp[3] = self.qqclient.get_qq_nub_from_uin(i['uin'])
-            self.logger.info(str(tmp))
-            friends.append(tmp)
-        self.hist.save_friends(friends)

@@ -6,11 +6,17 @@
 # @Version : 1.0
 
 import time
-from .bitconfig import Datebase_path
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, MetaData, Integer, Column, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# datebase
+Datebase_path = 'sqlite:///' + \
+    os.path.join(basedir, 'database/app.db')
 
 # 初始化数据库连接:
 engine = create_engine(Datebase_path)
@@ -104,6 +110,34 @@ class Friend(Base):
 
     def __repr__(self):
         return "<Friend( %s(%s) )" % (self.mark_name, self.user_qq)
+
+
+class Group(Base):
+    __tablename__ = "group"
+    gid = Column(String(uin_size), primary_key=True)
+    name = Column(String(name_size))
+    code = Column(String(uin_size))
+
+    def __init__(self, gid, name, code):
+        self.gid = gid
+        self.name = name
+        self.code = code
+
+    def __repr__(self):
+        return "<Group(gid:%s,name:%s,code:%s)>" % (self.gid, self.name, self.code)
+
+
+class Discuss(Base):
+    __tablename__ = "discuss"
+    did = Column(String(uin_size), primary_key=True)
+    name = Column(String(name_size))
+
+    def __init__(self, did, name):
+        self.did = did
+        self.name = name
+
+    def __repr(self):
+        return "<Discuss(did:%s,name:%s)>" % (self.did, self.name)
 
 
 DBsession = sessionmaker(bind=engine)

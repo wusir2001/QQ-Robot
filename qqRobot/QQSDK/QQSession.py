@@ -17,7 +17,7 @@ class QQSession(object):
     def __init__(self):
         self.logger = logging.getLogger('QQSDK.QQSession')
         self.session = requests.Session()
-
+        self.logger.debug('初始化qqSession')
         self.__prepare_session()
 
     def __prepare_session(self):
@@ -43,7 +43,7 @@ class QQSession(object):
         })
 
     def get_url(self, url, data=None, Referer=None, Origin=None, timeout=30):
-
+        self.logger.debug('get_url:%s', url)
         Referer and self.session.headers.update({'Referer': Referer})
         Origin and self.session.headers.update({'Origin': Origin})
 
@@ -54,12 +54,10 @@ class QQSession(object):
 
     def smartQQ_request(self, url, data=None, Referer=None, Origin=None, timeout=None,
                         expectedCodes=(0, 100003, 100100)):
-
-        # url = url.format(rand=repr(random.random()))
+        self.logger.debug('smartQQ_rq: %s', url)
         url = url.format(rand='0.1')
 
-        error_cnt = 0
-
+        api_err_cnt = 0
         while True:
 
             html = self.get_url(url, data, Referer,
@@ -79,14 +77,13 @@ class QQSession(object):
                 retcode = -1
 
             if (retcode in expectedCodes):
-                # Info('smartQQ request successful ! \n for result (%s)', result)
                 return result
             else:
                 self.logger.error(
-                    'smartQQ_request has error ! \n for message (%s)\nurl: %s\n', html, url)
-                if error_cnt < 5:
-                    error_cnt += 1
+                    'code(%s)smartQQ_request err! url:%s', retcode, url)
+                if api_err_cnt < 5:
+                    api_err_cnt += 1
                     continue
 
                 raise QQError(
-                    retcode, 'smartQQ_request has error ! \n for message (%s)url: %s\n' % (html, url))
+                    retcode, 'smartQQ_request err! url:%s' % (url))

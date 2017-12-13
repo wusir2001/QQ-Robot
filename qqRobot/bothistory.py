@@ -7,7 +7,7 @@
 
 import time
 import logging
-from .models import DBsession, ChatMessage, Admin, Friend
+from .models import DBsession, ChatMessage, Admin, Friend, Group, Discuss
 
 
 class Bothistory(object):
@@ -54,6 +54,7 @@ class Bothistory(object):
     '''
 
     def save_admin(self, user_qq, user_name):
+        self.logger.info('save_admin')
         session = DBsession()
         ad = session.query(Admin).filter(Admin.user_qq == user_qq).first()
         if not ad:
@@ -65,11 +66,26 @@ class Bothistory(object):
         session.close
 
     def save_friends(self, friends):
-
+        self.logger.info('save_friends')
         session = DBsession()
         for f in friends:
-            fri = Friend(*f)
-            session.add(fri)
+            session.add(Friend(*f))
+        session.commit()
+        session.close()
+
+    def save_groups(self, groups):
+        self.logger.info('save_groups')
+        session = DBsession()
+        for g in groups:
+            session.add(Group(*g))
+        session.commit()
+        session.close()
+
+    def save_discuss(self, discuss):
+        self.logger.info('save_discuss')
+        session = DBsession()
+        for d in discuss:
+            session.add(Discuss(*d))
         session.commit()
         session.close()
 
