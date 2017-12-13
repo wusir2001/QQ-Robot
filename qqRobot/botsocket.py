@@ -16,8 +16,8 @@ CLRF = b'\r\n'
 
 class Botsocket(object):
 
-    def __init__(self, QRcode_path, port=8888):
-        self.QRcode_path = QRcode_path
+    def __init__(self, qr_path, port=8888):
+        self.qr_path = qr_path
         self.host = ""
         self.port = port
         self.logger = logging.getLogger('qqRobot.Botsocket')
@@ -45,9 +45,9 @@ class Botsocket(object):
             bt = io.BytesIO()
             try:
                 bt.write(b'HTTP/1.1 200 OK' + CLRF)
-                with codecs.open(self.QRcode_path, "rb") as f:
+                with codecs.open(self.qr_path, "rb") as f:
                     cont = f.read()
-                # size = len(cont)
+
                 bt.write(b'Server: Apache/2.4.18 (Ubuntu)' + CLRF)
                 bt.write(b'Content-Type: image/jpeg' + CLRF * 2)
                 bt.write(cont)
@@ -55,7 +55,6 @@ class Botsocket(object):
                 bt.write(b'HTTP/1.1 400 Bad Request' + CLRF)
                 bt.write(b'Content-Type: text/html' + CLRF * 2)
                 bt.write(b'<h1>Not find the QRcode</h1>')
-            self.logger.debug(bt.getvalue())
             conn.sendall(bt.getvalue())
             bt.close()
             conn.close()

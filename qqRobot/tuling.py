@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 # @Date    : 2017-06-29 16:49:52
 # @Author  : bitwater (bitwater1997@gmail.com)
-# @Link    : http://www.bitwater1997.cn
+# @Link    : http://bitwater1997.cn
 # @Version : 1.0
 # import sys
 # reload(sys)
 # sys.setdefaultencoding('utf8')
 
 import requests
-# import json
 
 
 class TulingSDK(object):
@@ -124,18 +123,3 @@ class JsonDict(dict):
                                            self['function']['author'])
 
         return ret
-        # raise SDKError(code, ret)
-
-    def __setattr__(self, attr, value):
-        self[attr] = value
-
-
-class SDKError(BaseException):
-    """this error is from Tuling sdk"""
-
-    def __init__(self, code, text):
-        self.code = code
-        self.text = text
-
-    def __str__(self):
-        return 'code : %s\ntext: %s\n' % (self.code, self.text)
