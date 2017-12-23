@@ -46,20 +46,26 @@ class ChatMessage(Base):
     from_text = Column(Text)
     reply_text = Column(Text)
 
-    # group_uin = Column(String(uin_size))
-    # did_uin = Column(String(uin_size))
+    qq_nub = Column(String(qq_size), nullable=True)
+    qq_name = Column(String(qq_size), nullable=True)
+    group_name = Column(String(name_size), nullable=True)
+    did_name = Column(String(name_size), nullable=True)
 
-    user_qq = Column(String(qq_size), nullable=False)
-    user_name = Column(String(qq_size))
-
-    from_qq = Column(String(qq_size), nullable=False)
-    from_name = Column(String(qq_size))
+    self_qq = Column(String(qq_size))
 
     def __repr__(self):
-        return "<User(user:%s(%s),type:%s,from:%s(%s),text(from):%s,text(reply):%s )>" % (
-            self.user_name, self.user_qq,
-            self.message_type,
-            self.from_name, self.from_qq, self.from_text, self.reply_text)
+        if self.group_name:
+            return "<(%s)GroupMSG(%s)( %s:%s ) reply: %s" % (
+                self.self_qq, self.group_name, self.qq_name,
+                self.from_text, self.reply_text)
+        elif self.did_name:
+            return"<(%s)DiscuMSG(%s)( %s:%s ) reply: %s" % (
+                self.self_qq, self.did_name, self.qq_name,
+                self.from_text, self.reply_text)
+        else:
+            return "<(%s)MSG( %s:%s ) reply: %s" % (
+                self.self_qq, self.qq_name,
+                self.from_text, self.reply_text)
 
 
 class Admin(Base):
