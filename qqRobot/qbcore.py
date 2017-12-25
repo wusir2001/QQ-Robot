@@ -21,13 +21,14 @@ class qbcore(object):
         self.__routes = {}
         self.__msg_default = None
 
-    def config(self, qr_path=None, username=None, password=None):
+    def config(self, qr_path=None, username=None, password=None, usepass=False):
         self.__qr_path = qr_path
         self.__username = username
         self.__password = password
+        self.usepass = usepass
 
     def login(self):
-        if self.__qr_path:
+        if self.usepass is False:
             self.__qqclient.login_by_qrcode(self.__qr_path)
         else:
             self.__qqclient.login_by_pass(self.__username, self.__password)
@@ -38,7 +39,6 @@ class qbcore(object):
     def start(self):
         self.login()
         info = self.__qqclient.get_self_info2()
-        print (info)
         self.__friend_list = self.__qqclient.get_user_friends2()
         self.__group_list = self.__qqclient.get_group_name_list_mask2()
         self.__discus_list = self.__qqclient.get_discus_list()
@@ -51,6 +51,7 @@ class qbcore(object):
                 self.__msg_default = f
             else:
                 self.__routes[path] = f
+
         return wrap
 
     def mainloop(self):

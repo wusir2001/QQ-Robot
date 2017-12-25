@@ -8,4 +8,5 @@
 
 if __name__ == '__main__':
     from qqRobot import app
+
     app.start()

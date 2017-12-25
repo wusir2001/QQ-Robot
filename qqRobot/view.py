@@ -8,7 +8,7 @@
 from . import app
 from MQSDK import MQmsg
 from .config import APIkey
-from TulingSDK import TulingAPI
+from tulingBot import TulingAPI
 
 
 @app.msg_route('author|作者')
