@@ -22,5 +22,5 @@ logger = logging.logger = logging.getLogger('qqrobot')
 from .qbcore import qbcore
 
 app = qbcore()
-app.config(username=username, password=password, qr_path=qr_path, usepass=True)
+app.config(username=username, password=password, qr_path=qr_path, usepass=False)
 from .view import *

@@ -8,5 +8,12 @@
 
 if __name__ == '__main__':
     from qqRobot import app
-
-    app.start()
+    import  time
+    t = 1
+    while t > 0:
+        try:
+            app.start()
+        except:
+            t -= 1
+            time.sleep(120)
+            continue

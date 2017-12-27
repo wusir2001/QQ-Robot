@@ -7,7 +7,7 @@
 
 
 import logging
-from MQSDK import MQAPI, MQerr
+from MQSDK import MQAPI, MQerr,MQmsg
 import re
 
 
@@ -18,7 +18,8 @@ class qbcore(object):
         self.__qqclient = MQAPI()
         self.logger = logging.getLogger('qqRobot.Botcore')
 
-        self.__routes = {}
+        self.__listen_routes = {}
+        self.__deal_routes = {}
         self.__msg_default = None
 
     def config(self, qr_path=None, username=None, password=None, usepass=False):
@@ -28,6 +29,7 @@ class qbcore(object):
         self.usepass = usepass
 
     def login(self):
+        self.__qqclient.logout()
         if self.usepass is False:
             self.__qqclient.login_by_qrcode(self.__qr_path)
         else:
@@ -45,12 +47,14 @@ class qbcore(object):
 
         self.mainloop()
 
-    def msg_route(self, path=None, is_default=False):
+    def msg_route(self, path=None, is_listen=False, is_default=False):
         def wrap(f):
             if is_default:
                 self.__msg_default = f
+            elif is_listen is True:
+                self.__listen_routes[path] = f
             else:
-                self.__routes[path] = f
+                self.__deal_routes[path] = f
 
         return wrap
 
@@ -68,11 +72,25 @@ class qbcore(object):
     def __deal_message(self, msg):
         if msg is None:
             return
-        for key in self.__routes:
+        if msg.from_uin == self.uin:
+            return
+        if msg.send_uin and msg.send_uin == self.uin:
+            return
+        self.logger.info('开始处理消息')
+        is_listened = False
+        self.logger.info('处理监听消息')
+        for key in self.__listen_routes:
+            if re.match(key,msg.content):
+                self.__listen_routes[key](msg)
+                is_listened = True
+
+        for key in self.__deal_routes:
             if re.match(key, msg.content):
-                self.__routes[key](msg)
-                return
-        self.__msg_default(msg)
+                if self.__deal_routes[key](msg):
+                    return
+        self.logger.info('处理默认消息')
+        if not is_listened and self.__msg_default:
+            self.__msg_default(msg)
 
     def send_buddy(self, msg):
         self.__qqclient.send_buddy_msg2(msg.from_uin, msg.reply)
@@ -82,3 +100,41 @@ class qbcore(object):
 
     def send_discs(self, msg):
         self.__qqclient.send_discu_msg2(msg.did, msg.reply)
+
+    def send_all(self,msg):
+        self.logger.info('开始回复消息到任意')
+        if msg.poll_type == MQmsg.PERSION_MESSAGE:
+            self.send_buddy(msg)
+        else:
+            if msg.poll_type == MQmsg.GROUP_MESSAGE:
+                self.send_group(msg)
+            elif msg.poll_type == MQmsg.DISCUSS_MESSAGE:
+                self.send_discs(msg)
+
+    def deal_to_me_message(self,f):
+        def wrapper(msg):
+            if msg.poll_type == MQmsg.PERSION_MESSAGE:
+                msg.reply = f(msg)
+                self.send_all(msg)
+                return  True
+            else:
+                at_me = '@%s' % self.nick
+                if at_me in msg.content:
+                    cont = msg.content.replace(at_me,'')
+                    msg.reply = f(msg)
+                    self.send_all(msg)
+                    return True
+                return  False
+        return wrapper
+
+    def deal_other_message(self,f):
+        def wrapper(msg):
+            if msg.poll_type == MQmsg.PERSION_MESSAGE:
+                return
+            else:
+                at_me = '@%s' % self.nick
+                if at_me in msg.content:
+                    return
+                msg.reply = f(msg)
+                self.send_all(msg)
+        return wrapper
