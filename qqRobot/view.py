@@ -28,7 +28,10 @@ def tran(msg):
     app.logger.info("消息处理(tran)")
     text = msg.content.replace('tran','')
     api = TransAPI(baiduTran_APIID, baiduTran_SECRET)
-    msg.reply = api.tran(text=text, _to='zh')
+    try:
+        msg.reply = api.tran(text=text, _to='zh')
+    except:
+        msg.reply = "there is some error in api"
     app.send_all(msg)
 
 
