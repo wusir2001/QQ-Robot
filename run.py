@@ -56,25 +56,23 @@ def daemonize(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
     os.dup2(se.fileno(), sys.stderr.fileno())
 
 
-import logging.config
-from qqRobot import Botcore
-from qqRobot.config import APIkey
-
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-log_file_path = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), 'logging_config.ini')
-logging.config.fileConfig(log_file_path)
-logger = logging.logger = logging.getLogger('qqrobot')
-
-
 def main():
-    qrcode = os.path.join(basedir, 'qrcode.jpg')
-    bot = Botcore(APIkey, qrcode)
-    bot.start()
+    from qqRobot import app
+    import  time
+    t = 10
+    while t > 0:
+        try:
+            app.start()
+        except:
+            t -= 1
+            time.sleep(180)
+            app.logger.error("error and restart")
+            continue
 
 
 if __name__ == "__main__":
-    stderr_path = os.path.join(basedir, 'log/error.log')
-    daemonize(stdout=stderr_path)
+    stderr_path = os.path.join(basedir, 'log/errors.log')
+    daemonize(stdout=stderr_path,stderr=stderr_path)
     main()

@@ -20,6 +20,6 @@ logger = logging.logger = logging.getLogger('qqrobot')
 
 from .qbcore import qbcore
 
-app = qbcore(username=username,password=password)
+app = qbcore(username=username,password=password,is_show=False)
 
 from .view import *
