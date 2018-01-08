@@ -30,12 +30,6 @@ name_size = 50
 uin_size = 20
 qq_size = 20
 
-
-'''
-    聊天记录,该表永久保存
-'''
-
-
 class ChatMessage(Base):
     __tablename__ = "ChatMessage"
     id = Column(Integer, primary_key=True)
@@ -83,67 +77,67 @@ class Admin(Base):
     def __repr__(self):
         return "<Admin( %s(%s) ) > " % (self.user_qq, self.user_name)
 
-
-# class Category(Base):
-#     """docstring for Category"""
-#     __tablename__ = "category"
-
-#     index = Column(Integer, primary_key=True)
-#     sort = Column(Integer)
-#     name = Column(String(100))
-
+#
+# # class Category(Base):
+# #     """docstring for Category"""
+# #     __tablename__ = "category"
+#
+# #     index = Column(Integer, primary_key=True)
+# #     sort = Column(Integer)
+# #     name = Column(String(100))
+#
+# #     def __repr__(self):
+# #         return "<Category( index:%s , sort:%s , name:%s )>" % (
+# #             self.index, self.sort, self.name)
+#
+#
+# class Friend(Base):
+#     __tablename__ = "friend"
+#     uin = Column(String(uin_size), primary_key=True)
+#     timestamp = Column(String(timestamp_size),
+#                        nullable=False, default=str(time.time()))
+#
+#     user_qq = Column(String(qq_size))
+#     user_name = Column(String(name_size))
+#     mark_name = Column(String(name_size))  # 备注姓名
+#
+#     # category_index = Column(Integer, ForeignKey('category.index'))
+#     def __init__(self, uin, user_name, mark_name, user_qq):
+#         self.uin = uin
+#         self.user_qq = user_qq
+#         self.user_name = user_name
+#         self.mark_name = mark_name
+#
 #     def __repr__(self):
-#         return "<Category( index:%s , sort:%s , name:%s )>" % (
-#             self.index, self.sort, self.name)
-
-
-class Friend(Base):
-    __tablename__ = "friend"
-    uin = Column(String(uin_size), primary_key=True)
-    timestamp = Column(String(timestamp_size),
-                       nullable=False, default=str(time.time()))
-
-    user_qq = Column(String(qq_size))
-    user_name = Column(String(name_size))
-    mark_name = Column(String(name_size))  # 备注姓名
-
-    # category_index = Column(Integer, ForeignKey('category.index'))
-    def __init__(self, uin, user_name, mark_name, user_qq):
-        self.uin = uin
-        self.user_qq = user_qq
-        self.user_name = user_name
-        self.mark_name = mark_name
-
-    def __repr__(self):
-        return "<Friend( %s(%s) )" % (self.mark_name, self.user_qq)
-
-
-class Group(Base):
-    __tablename__ = "group"
-    gid = Column(String(uin_size), primary_key=True)
-    name = Column(String(name_size))
-    code = Column(String(uin_size))
-
-    def __init__(self, gid, name, code):
-        self.gid = gid
-        self.name = name
-        self.code = code
-
-    def __repr__(self):
-        return "<Group(gid:%s,name:%s,code:%s)>" % (self.gid, self.name, self.code)
-
-
-class Discuss(Base):
-    __tablename__ = "discuss"
-    did = Column(String(uin_size), primary_key=True)
-    name = Column(String(name_size))
-
-    def __init__(self, did, name):
-        self.did = did
-        self.name = name
-
-    def __repr(self):
-        return "<Discuss(did:%s,name:%s)>" % (self.did, self.name)
+#         return "<Friend( %s(%s) )" % (self.mark_name, self.user_qq)
+#
+#
+# class Group(Base):
+#     __tablename__ = "group"
+#     gid = Column(String(uin_size), primary_key=True)
+#     name = Column(String(name_size))
+#     code = Column(String(uin_size))
+#
+#     def __init__(self, gid, name, code):
+#         self.gid = gid
+#         self.name = name
+#         self.code = code
+#
+#     def __repr__(self):
+#         return "<Group(gid:%s,name:%s,code:%s)>" % (self.gid, self.name, self.code)
+#
+#
+# class Discuss(Base):
+#     __tablename__ = "discuss"
+#     did = Column(String(uin_size), primary_key=True)
+#     name = Column(String(name_size))
+#
+#     def __init__(self, did, name):
+#         self.did = did
+#         self.name = name
+#
+#     def __repr(self):
+#         return "<Discuss(did:%s,name:%s)>" % (self.did, self.name)
 
 
 DBsession = sessionmaker(bind=engine)

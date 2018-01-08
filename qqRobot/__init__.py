@@ -7,9 +7,8 @@
 
 import sys
 import os
-import logging
 import logging.config
-from .config import username, password, tuling_path, smartqq_sdk_path, qr_path
+from qqRobot.config import username, password, tuling_path, smartqq_sdk_path, qr_path
 
 sys.path.append(smartqq_sdk_path)
 sys.path.append(tuling_path)
@@ -21,6 +20,6 @@ logger = logging.logger = logging.getLogger('qqrobot')
 
 from .qbcore import qbcore
 
-app = qbcore()
-app.config(username=username, password=password, qr_path=qr_path, usepass=False)
+app = qbcore(username=username,password=password)
+
 from .view import *

@@ -7,7 +7,7 @@
 import math
 import random
 
-# from .config import  baiduTran_APIID ,baiduTran_SECRET
+# from config import  baiduTran_APIID ,baiduTran_SECRET
 import  hashlib
 import  requests
 
@@ -42,6 +42,7 @@ class TransAPI(object):
         }
 
         r = requests.get(url=self.url,params=parames).json()
+
         try:
             return  r['trans_result'][0]['dst']
         except :
@@ -57,7 +58,7 @@ class BaiduAPIErr(BaseException):
     def __str__(self):
         return  self.err
 
-if __name__ == "__main__":
-    api = TransAPI(baiduTran_APIID,baiduTran_SECRET)
-    ret = api.tran(text='i love you ',_to='zh')
-    print( ret )
+# if __name__ == "__main__":
+#     api = TransAPI(baiduTran_APIID,baiduTran_SECRET)
+#     ret = api.tran(text='i love you ',_to='zh')
+#     print( ret )

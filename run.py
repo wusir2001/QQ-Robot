@@ -56,10 +56,9 @@ def daemonize(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
     os.dup2(se.fileno(), sys.stderr.fileno())
 
 
-import logging
 import logging.config
 from qqRobot import Botcore
-from config import APIkey
+from qqRobot.config import APIkey
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
