@@ -6,3 +6,4 @@
 # @Version : 1.0
 
 from .baiduTransAPI import TransAPI
+from  .exin import  Exin
