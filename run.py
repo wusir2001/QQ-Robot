@@ -73,6 +73,7 @@ def main():
 
 
 if __name__ == "__main__":
-    stderr_path = os.path.join(basedir, 'log/errors.log')
+    stdout_path = os.path.join(basedir, 'log/out.log')
+    stderr_path = os.path.join(basedir, 'log/error.log')
     daemonize(stdout=stderr_path,stderr=stderr_path)
     main()

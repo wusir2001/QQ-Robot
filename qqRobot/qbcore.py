@@ -10,7 +10,6 @@ import logging
 from MQSDK import MQAPI, MQerr, MQmsg
 import re
 
-
 class qbcore(object):
 
     def __init__(self,qrpath = None, username = None,password = None,is_show = True):
@@ -60,27 +59,23 @@ class qbcore(object):
 
     def mainloop(self):
         while True:
-            try:
-                msg = self.__qqclient.poll2()
-            except MQerr:
-                self.logger.info('出现错误,尝试重新登录')
-                self.login()
-                continue
-            self.logger.info('get message :%s', msg)
-            self.__deal_message(msg)
+            msg = self.__qqclient.poll2()
+            if msg:
+                self.logger.info('get message :%s', msg)
+                self.__deal_message(msg)
 
     def __deal_message(self, msg):
-        if msg is None or msg.from_uin == self.uin or msg.send_uin == self.uin:
+        #  不处理自己发送的
+        if  msg.from_uin == self.uin or msg.send_uin == self.uin:
             return
 
-        self.logger.info('开始处理消息')
+        self.logger.info("开始处理消息")
 
         for key in self.__deal_routes:
             if re.match(key, msg.content):
                 self.__deal_routes[key](msg)
                 return
-        self.logger.info('处理默认消息')
-
+        self.logger.info("默认回复消息")
         if self.__msg_default:
             self.__msg_default(msg)
 
@@ -108,27 +103,18 @@ class qbcore(object):
             if msg.poll_type == MQmsg.PERSION_MESSAGE:
                 msg.reply = f(msg)
                 self.send_all(msg)
-                return True
             else:
                 at_me = '@%s' % self.nick
                 if at_me in msg.content:
                     cont = msg.content.replace(at_me, '')
                     msg.reply = f(cont)
                     self.send_all(msg)
-                    return True
-                return False
-
         return wrapper
 
     def deal_other_message(self, f):
         def wrapper(msg):
-            if msg.poll_type == MQmsg.PERSION_MESSAGE:
-                return
-            else:
-                at_me = '@%s' % self.nick
-                if at_me in msg.content:
-                    return
+            at_me = '@%s' % self.nick
+            if msg.poll_type != MQmsg.PERSION_MESSAGE and at_me not in msg.content:
                 msg.reply = f(msg)
                 self.send_all(msg)
-
         return wrapper
