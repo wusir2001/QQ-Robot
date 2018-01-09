@@ -9,7 +9,19 @@ from . import app
 from qqRobot.config import tuling_APIkey ,baiduTran_SECRET,baiduTran_APIID
 from tulingBot import TulingAPI
 from .control import  TransAPI
+import time
 
+@app.msg_route('status|@.+status')
+def menu(msg):
+    app.logger.info("消息处理(status)")
+
+    msg.reply = "初始化时间:%s\n登入次数:%d\n本次登入时间:%s\n回复消息条数:%d\n"%(
+        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(app.init_time)),
+        app.login_cnt,
+        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(app.login_time)),
+        app.send_cnt
+    )
+    app.send_all(msg)
 
 @app.msg_route('menu|@.+menu')
 def menu(msg):

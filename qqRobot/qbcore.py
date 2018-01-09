@@ -5,7 +5,7 @@
 # @Link    : http://www.bitwater1997.cn
 # @Version : 1.0
 
-
+import time
 import logging
 from MQSDK import MQAPI, MQerr, MQmsg
 import re
@@ -25,6 +25,11 @@ class qbcore(object):
         self.__deal_routes = {}
         self.__msg_default = None
 
+        self.init_time = time.time()
+        self.login_cnt = 0;
+        self.login_time = None;
+        self.send_cnt = 0;
+
     def login_by_qrcode(self):
         self.__qqclient.login_by_qrcode(self.__qr_path)
 
@@ -32,6 +37,8 @@ class qbcore(object):
         self.__qqclient.login_by_pass(self.__username, self.__password, self.__is_show)
 
     def start(self):
+        self.login_cnt += 1
+        self.login_time = time.time()
         self.__qqclient.logout()
         if self.__qrpath :
             self.login_by_qrcode()
@@ -80,12 +87,15 @@ class qbcore(object):
             self.__msg_default(msg)
 
     def send_buddy(self, msg):
+        self.send_cnt += 1
         self.__qqclient.send_buddy_msg2(msg.from_uin, msg.reply)
 
     def send_group(self, msg):
+        self.send_cnt += 1
         self.__qqclient.send_qun_msg2(msg.group_code, msg.reply)
 
     def send_discs(self, msg):
+        self.send_cnt += 1
         self.__qqclient.send_discu_msg2(msg.did, msg.reply)
 
     def send_all(self, msg):
