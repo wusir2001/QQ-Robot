@@ -30,24 +30,30 @@ def fuck(msg):
     '''
     隐藏命令, 只处理私聊的
     命令格式 :
-        fuck 昵称/备注 语句
+        fuck$昵称/备注$语句
     效果:
         每次他在群里发言 @他(优先备注)回复他一句话
     '''
     app.logger.info("消息处理(fuck)")
     if msg.poll_type == MQmsg.PERSION_MESSAGE:
-        cmd = msg.content.split(" ")
+        cmd = msg.content.split("$")
         if len(cmd) == 3:
             for f in app.friends_list:
                 if app.friends_list[f]['markname'] == cmd[1] or \
                         app.friends_list[f]['nick'] == cmd[1]:
+
                     app.logger.info("fuck (%s,%s,%s)", cmd[1], f, cmd[2])
-                    exin.set(f, cmd[2])
-                    msg.reply = '成功 uin:%s' % (f)
+                    # 判断删除还是增加
+                    if cmd[2] == '-r':
+                        c = exin.remove(f)
+                        msg.reply = '删除 uin:%s,%s' % (f,c)
+                    else:
+                        exin.set(f, cmd[2])
+                        msg.reply = '成功 uin:%s' % (f)
             if not msg.reply:
                 msg.reply = '未找到此人'
         else :
-            msg.reply = '命令格式不正确'
+            msg.reply = '命令格式不正确\n命令格式:fuck$昵称/备注$-r(删除)/语句'
         app.send_all(msg)
 
 @app.msg_route('status')

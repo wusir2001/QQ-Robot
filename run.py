@@ -5,7 +5,6 @@
 # @Link    : http://www.bitwater1997.cn
 # @Version : $Id$
 
-# coding: utf-8
 import sys
 import os
 
@@ -61,13 +60,11 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 def main():
     from qqRobot import app
     import  time
-    t = 10
-    while t > 0:
+    while True:
         try:
             app.start()
         except:
-            t -= 1
-            time.sleep(180)
+            time.sleep(300)
             app.logger.error("error and restart")
             continue
 

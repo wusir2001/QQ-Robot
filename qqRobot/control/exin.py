@@ -21,4 +21,8 @@ class Exin(object):
     def set(self , uin , content = '你说什么,爸爸听不见'):
         self.__exlist[uin] = content
 
-
+    def remove(self,uin):
+        if uin in self.__exlist:
+            return self.__exlist.pop(uin)
+        else:
+            return None
