@@ -21,5 +21,6 @@ logger = logging.logger = logging.getLogger('qqrobot')
 from .qbcore import qbcore
 
 app = qbcore(username=username,password=password,is_show=False)
+# app = qbcore(qrpath='qrcode.jpg')
 
 from .view import *

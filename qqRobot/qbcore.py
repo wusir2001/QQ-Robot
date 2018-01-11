@@ -47,7 +47,7 @@ class qbcore(object):
 
 
     def login_by_qrcode(self):
-        self.__qqclient.login_by_qrcode(self.__qr_path)
+        self.__qqclient.login_by_qrcode(self.__qrpath)
 
     def login_by_pass(self):
         self.__qqclient.login_by_pass(self.__username, self.__password, self.__is_show)
@@ -144,8 +144,8 @@ class qbcore(object):
             else:
                 at_me = '@%s' % self.nick
                 if at_me in msg.content:
-                    cont = msg.content.replace(at_me, '')
-                    msg.reply = f(cont)
+                    msg.content = msg.content.replace(at_me, '')
+                    msg.reply = f(msg)
                     self.send_all(msg)
 
         return wrapper
