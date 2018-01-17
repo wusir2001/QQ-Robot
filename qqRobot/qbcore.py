@@ -89,7 +89,12 @@ class qbcore(object):
 
     # 主循环
     def mainloop(self):
+        cnt = 0
         while True:
+            cnt += 1
+            if cnt > 8888:
+                raise Exception("重新登入")
+
             msg = self.__qqclient.poll2()
             if msg:
                 self.logger.info('get message :%s', msg)

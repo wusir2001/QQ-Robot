@@ -7,7 +7,6 @@
 import math
 import random
 
-# from config import  baiduTran_APIID ,baiduTran_SECRET
 import  hashlib
 import  requests
 
